@@ -50,7 +50,7 @@ module.exports.updateInfoUser = (req, res) => {
     .then((user) => res.send({ data: user }))
     .catch((err) => {
       if (err.name === 'CastError') {
-        res.status(errorCodes.notFound).send({ message: 'Пользователь не найден.' });
+        res.status(errorCodes.badRequest).send({ message: 'Переданы некорректные данные при обновлении профиля.' });
       } else if (err.name === 'ValidationError') {
         res.status(errorCodes.badRequest).send({ message: 'Переданы некорректные данные при обновлении профиля.' });
       } else {
@@ -70,7 +70,7 @@ module.exports.updateAvatarUser = (req, res) => {
     .then((user) => res.send({ data: user }))
     .catch((err) => {
       if (err.name === 'CastError') {
-        res.status(errorCodes.notFound).send({ message: 'Пользователь не найден.' });
+        res.status(errorCodes.badRequest).send({ message: 'Переданы некорректные данные при обновлении профиля.' });
       } else if (err.name === 'ValidationError') {
         res.status(errorCodes.badRequest).send({ message: 'Переданы некорректные данные при обновлении профиля.' });
       } else {

@@ -7,8 +7,10 @@ const app = express();
 
 mongoose.connect('mongodb://localhost:27017/mestodb', (err) => {
   if (err) {
+    // eslint-disable-next-line no-console
     console.log(err);
   }
+  // eslint-disable-next-line no-console
   console.log('connected to MongoDB');
 });
 
@@ -26,10 +28,11 @@ app.use((req, res, next) => {
 app.use('/users', require('./routes/users'));
 app.use('/cards', require('./routes/cards'));
 
-app.use('/404', (req, res) => {
+app.use('*', (req, res) => {
   res.status(404).send({ message: 'Страница не найдена.' });
 });
 
 app.listen(PORT, () => {
+  // eslint-disable-next-line no-console
   console.log(`App listening on port ${PORT}`);
 });
