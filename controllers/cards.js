@@ -31,7 +31,7 @@ module.exports.deleteCard = (req, res, next) => {
             res.send({ data: card });
           });
       } else {
-        next(new errorsList.UnauthorizedError('Это не ваша карточка!'));
+        next(new errorsList.ForbiddenError('Это не ваша карточка!'));
       }
     })
     .catch((err) => {
