@@ -13,34 +13,32 @@ module.exports.getUser = (req, res, next) => {
   User.findById(req.params.userId)
     .then((user) => {
       if (user === null) {
-        throw new errorsList.NotFoundError('Пользователь не найден.');
+        next(new errorsList.NotFoundError('Пользователь не найден.'));
       } else {
         res.send({ data: user });
       }
     })
     .catch((err) => {
       if (err.name === 'CastError') {
-        throw new errorsList.BadRequestError('Переданы некорректные данные при запросе пользователя.');
+        next(new errorsList.BadRequestError('Переданы некорректные данные при запросе пользователя.'));
       }
-    })
-    .catch(next);
+    });
 };
 
 module.exports.getCurrentUser = (req, res, next) => {
   User.findById(req.user._id)
     .then((user) => {
       if (user === null) {
-        throw new errorsList.NotFoundError('Пользователь не найден.');
+        next(new errorsList.NotFoundError('Пользователь не найден.'));
       } else {
         res.send({ data: user });
       }
     })
     .catch((err) => {
       if (err.name === 'CastError') {
-        throw new errorsList.BadRequestError('Переданы некорректные данные при запросе пользователя.');
+        next(new errorsList.BadRequestError('Переданы некорректные данные при запросе пользователя.'));
       }
-    })
-    .catch(next);
+    });
 };
 
 module.exports.createUser = (req, res, next) => {
@@ -58,14 +56,13 @@ module.exports.createUser = (req, res, next) => {
     })
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        throw new errorsList.BadRequestError('Переданы некорректные данные при создании пользователя.');
+        next(new errorsList.BadRequestError('Переданы некорректные данные при создании пользователя.'));
       } else if (err.message === 'Illegal arguments: undefined, number') {
-        throw new errorsList.BadRequestError('Переданы некорректные данные при создании пользователя.');
+        next(new errorsList.BadRequestError('Переданы некорректные данные при создании пользователя.'));
       } else if (err.code === 11000) {
-        throw new errorsList.ConflictError('Пользователь с таким email зарегистрован.');
+        next(new errorsList.ConflictError('Пользователь с таким email зарегистрован.'));
       }
-    })
-    .catch(next);
+    });
 };
 
 module.exports.updateInfoUser = (req, res, next) => {
@@ -79,12 +76,11 @@ module.exports.updateInfoUser = (req, res, next) => {
     .then((user) => res.send({ data: user }))
     .catch((err) => {
       if (err.name === 'CastError') {
-        throw new errorsList.BadRequestError('Переданы некорректные данные при обновлении профиля.');
+        next(new errorsList.BadRequestError('Переданы некорректные данные при обновлении профиля.'));
       } else if (err.name === 'ValidationError') {
-        throw new errorsList.BadRequestError('Переданы некорректные данные при обновлении профиля.');
+        next(new errorsList.BadRequestError('Переданы некорректные данные при обновлении профиля.'));
       }
-    })
-    .catch(next);
+    });
 };
 
 module.exports.updateAvatarUser = (req, res, next) => {
@@ -98,12 +94,11 @@ module.exports.updateAvatarUser = (req, res, next) => {
     .then((user) => res.send({ data: user }))
     .catch((err) => {
       if (err.name === 'CastError') {
-        throw new errorsList.BadRequestError('Переданы некорректные данные при обновлении профиля.');
+        next(new errorsList.BadRequestError('Переданы некорректные данные при обновлении профиля.'));
       } else if (err.name === 'ValidationError') {
-        throw new errorsList.BadRequestError('Переданы некорректные данные при обновлении профиля.');
+        next(new errorsList.BadRequestError('Переданы некорректные данные при обновлении профиля.'));
       }
-    })
-    .catch(next);
+    });
 };
 
 module.exports.login = (req, res, next) => {
