@@ -52,7 +52,10 @@ module.exports.createUser = (req, res, next) => {
     .then((hash) => User.create({
       name, about, avatar, email, password: hash,
     }))
-    .then((user) => res.send({ data: user }))
+    .then((document) => {
+      const { password: removed, ...user } = document.toObject();
+      res.send({ data: user });
+    })
     .catch((err) => {
       if (err.name === 'ValidationError') {
         throw new errorsList.BadRequestError('Переданы некорректные данные при создании пользователя.');
