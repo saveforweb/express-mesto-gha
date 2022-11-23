@@ -14,7 +14,17 @@ router.get('/:userId', celebrate({
   }).required(),
 }), getUser);
 
-router.patch('/me', updateInfoUser);
-router.patch('/me/avatar', updateAvatarUser);
+router.patch('/me', celebrate({
+  body: Joi.object().keys({
+    name: Joi.string().min(2).max(30),
+    about: Joi.string().min(2).max(30),
+  }),
+}), updateInfoUser);
+
+router.patch('/me/avatar', celebrate({
+  body: Joi.object().keys({
+    avatar: Joi.string().uri({ scheme: ['http', 'https'] }),
+  }),
+}), updateAvatarUser);
 
 module.exports = router;
