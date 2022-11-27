@@ -1,5 +1,6 @@
 const router = require('express').Router();
 const { celebrate, Joi } = require('celebrate');
+const regexList = require('../utils/regexList');
 
 const {
   getUsers, getUser, updateInfoUser, updateAvatarUser, getCurrentUser,
@@ -23,7 +24,7 @@ router.patch('/me', celebrate({
 
 router.patch('/me/avatar', celebrate({
   body: Joi.object().keys({
-    avatar: Joi.string().uri({ scheme: ['^(https?|ftp|file)://[-a-zA-Z0-9+&@#/%?=~_|!:,.;]*[-a-zA-Z0-9+&@#/%=~_|]'] }),
+    avatar: Joi.string().regex(regexList.urlRegex).uri({ scheme: ['http', 'https'] }),
   }),
 }), updateAvatarUser);
 
