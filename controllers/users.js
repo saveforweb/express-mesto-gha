@@ -11,8 +11,8 @@ module.exports.getUsers = (req, res, next) => {
     });
 };
 
-module.exports.getUser = (req, res, next) => {
-  User.findById(req.params.userId)
+const findUserById = (req, res, next, userId) => {
+  User.findById(userId)
     .then((user) => {
       if (user === null) {
         next(new errorsList.NotFoundError('Пользователь не найден.'));
@@ -29,22 +29,12 @@ module.exports.getUser = (req, res, next) => {
     });
 };
 
+module.exports.getUser = (req, res, next) => {
+  findUserById(req, res, next, req.params.userId);
+};
+
 module.exports.getCurrentUser = (req, res, next) => {
-  User.findById(req.user._id)
-    .then((user) => {
-      if (user === null) {
-        next(new errorsList.NotFoundError('Пользователь не найден.'));
-      } else {
-        res.send({ data: user });
-      }
-    })
-    .catch((err) => {
-      if (err.name === 'CastError') {
-        next(new errorsList.BadRequestError('Переданы некорректные данные при запросе пользователя.'));
-      } else {
-        next(new errorsList.InternalServerError(err.message));
-      }
-    });
+  findUserById(req, res, next, req.user._id);
 };
 
 module.exports.createUser = (req, res, next) => {
