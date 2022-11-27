@@ -7,7 +7,7 @@ module.exports.getUsers = (req, res, next) => {
   User.find({})
     .then((users) => res.send({ data: users }))
     .catch((err) => {
-      next(new errorsList.InternalServerError(err.message));
+      next(err);
     });
 };
 
@@ -24,7 +24,7 @@ const findUserById = (req, res, next, userId) => {
       if (err.name === 'CastError') {
         next(new errorsList.BadRequestError('Переданы некорректные данные при запросе пользователя.'));
       } else {
-        next(new errorsList.InternalServerError(err.message));
+        next(err);
       }
     });
 };
@@ -57,7 +57,7 @@ module.exports.createUser = (req, res, next) => {
       } else if (err.code === 11000) {
         next(new errorsList.ConflictError('Пользователь с таким email зарегистрован.'));
       } else {
-        next(new errorsList.InternalServerError(err.message));
+        next(err);
       }
     });
 };
@@ -83,7 +83,7 @@ module.exports.updateInfoUser = (req, res, next) => {
       } else if (err.name === 'ValidationError') {
         next(new errorsList.BadRequestError('Переданы некорректные данные при обновлении профиля.'));
       } else {
-        next(new errorsList.InternalServerError(err.message));
+        next(err);
       }
     });
 };
@@ -109,7 +109,7 @@ module.exports.updateAvatarUser = (req, res, next) => {
       } else if (err.name === 'ValidationError') {
         next(new errorsList.BadRequestError('Переданы некорректные данные при обновлении профиля.'));
       } else {
-        next(new errorsList.InternalServerError(err.message));
+        next(err);
       }
     });
 };
@@ -143,6 +143,6 @@ module.exports.login = (req, res, next) => {
       return res.send({ message: 'Всё верно!' });
     })
     .catch((err) => {
-      next(new errorsList.InternalServerError(err.message));
+      next(err);
     });
 };
