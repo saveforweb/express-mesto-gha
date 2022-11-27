@@ -5,6 +5,7 @@ const { celebrate, Joi, errors } = require('celebrate');
 const bodyParser = require('body-parser');
 const { errorCodes } = require('./utils/errorCodes');
 const errorsList = require('./errors/index');
+const regexList = require('./utils/regexList');
 
 const { login, createUser } = require('./controllers/users');
 const auth = require('./middlewares/auth');
@@ -35,7 +36,7 @@ app.post('/signup', celebrate({
   body: Joi.object().keys({
     name: Joi.string().min(2).max(30),
     about: Joi.string().min(2).max(30),
-    avatar: Joi.string().uri({ scheme: ['^(https?|ftp|file)://[-a-zA-Z0-9+&@#/%?=~_|!:,.;]*[-a-zA-Z0-9+&@#/%=~_|]'] }),
+    avatar: Joi.string().regex(regexList.urlRegex).uri({ scheme: ['http', 'https'] }).required(),
     email: Joi.string().email().required(),
     password: Joi.string().required(),
   }),
