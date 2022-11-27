@@ -7,10 +7,12 @@ const {
 
 router.get('/', getCards);
 
+const urlRegex = /[(http(s)?)://(www.)?a-zA-Z0-9@:%._+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_+.~#?&//=]*)/;
+
 router.post('/', celebrate({
   body: Joi.object().keys({
     name: Joi.string().min(2).max(30).required(),
-    link: Joi.string().uri({ scheme: ['^(https?|ftp|file)://[-a-zA-Z0-9+&@#/%?=~_|!:,.;]*[-a-zA-Z0-9+&@#/%=~_|]'] }).required(),
+    link: Joi.string().regex(urlRegex).uri({ scheme: ['http', 'https'] }).required(),
   }),
 }), createCard);
 

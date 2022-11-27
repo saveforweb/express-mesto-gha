@@ -3,8 +3,12 @@ const errorsList = require('../errors/index');
 
 module.exports.getCards = (req, res, next) => {
   Card.find({})
+    .populate('owner')
+    .populate('likes')
     .then((cards) => res.send({ data: cards }))
-    .catch(next);
+    .catch((err) => {
+      next(new errorsList.InternalServerError(err.message));
+    });
 };
 
 module.exports.createCard = (req, res, next) => {
@@ -16,6 +20,8 @@ module.exports.createCard = (req, res, next) => {
     .catch((err) => {
       if (err.name === 'ValidationError') {
         next(new errorsList.BadRequestError('Переданы некорректные данные при создании карточки.'));
+      } else {
+        next(new errorsList.InternalServerError(err.message));
       }
     });
 };
@@ -37,6 +43,8 @@ module.exports.deleteCard = (req, res, next) => {
     .catch((err) => {
       if (err.name === 'CastError') {
         next(new errorsList.BadRequestError('Переданы некорректные данные при удалении карточки.'));
+      } else {
+        next(new errorsList.InternalServerError(err.message));
       }
     });
 };
@@ -57,6 +65,8 @@ module.exports.likeCard = (req, res, next) => {
     .catch((err) => {
       if (err.name === 'CastError') {
         next(new errorsList.BadRequestError('Переданы некорректные данные при удалении карточки.'));
+      } else {
+        next(new errorsList.InternalServerError(err.message));
       }
     });
 };
@@ -77,6 +87,8 @@ module.exports.dislikeCard = (req, res, next) => {
     .catch((err) => {
       if (err.name === 'CastError') {
         next(new errorsList.BadRequestError('Переданы некорректные данные для постановки лайка.'));
+      } else {
+        next(new errorsList.InternalServerError(err.message));
       }
     });
 };

@@ -6,7 +6,9 @@ const errorsList = require('../errors/index');
 module.exports.getUsers = (req, res, next) => {
   User.find({})
     .then((users) => res.send({ data: users }))
-    .catch(next);
+    .catch((err) => {
+      next(new errorsList.InternalServerError(err.message));
+    });
 };
 
 module.exports.getUser = (req, res, next) => {
@@ -21,6 +23,8 @@ module.exports.getUser = (req, res, next) => {
     .catch((err) => {
       if (err.name === 'CastError') {
         next(new errorsList.BadRequestError('Переданы некорректные данные при запросе пользователя.'));
+      } else {
+        next(new errorsList.InternalServerError(err.message));
       }
     });
 };
@@ -37,6 +41,8 @@ module.exports.getCurrentUser = (req, res, next) => {
     .catch((err) => {
       if (err.name === 'CastError') {
         next(new errorsList.BadRequestError('Переданы некорректные данные при запросе пользователя.'));
+      } else {
+        next(new errorsList.InternalServerError(err.message));
       }
     });
 };
@@ -60,6 +66,8 @@ module.exports.createUser = (req, res, next) => {
         next(new errorsList.BadRequestError('Переданы некорректные данные при создании пользователя.'));
       } else if (err.code === 11000) {
         next(new errorsList.ConflictError('Пользователь с таким email зарегистрован.'));
+      } else {
+        next(new errorsList.InternalServerError(err.message));
       }
     });
 };
@@ -72,12 +80,20 @@ module.exports.updateInfoUser = (req, res, next) => {
     runValidators: true,
     upsert: false,
   })
-    .then((user) => res.send({ data: user }))
+    .then((user) => {
+      if (user === null) {
+        next(new errorsList.NotFoundError('Пользователь не найден.'));
+      } else {
+        res.send({ data: user });
+      }
+    })
     .catch((err) => {
       if (err.name === 'CastError') {
         next(new errorsList.BadRequestError('Переданы некорректные данные при обновлении профиля.'));
       } else if (err.name === 'ValidationError') {
         next(new errorsList.BadRequestError('Переданы некорректные данные при обновлении профиля.'));
+      } else {
+        next(new errorsList.InternalServerError(err.message));
       }
     });
 };
@@ -90,12 +106,20 @@ module.exports.updateAvatarUser = (req, res, next) => {
     runValidators: true,
     upsert: false,
   })
-    .then((user) => res.send({ data: user }))
+    .then((user) => {
+      if (user === null) {
+        next(new errorsList.NotFoundError('Пользователь не найден.'));
+      } else {
+        res.send({ data: user });
+      }
+    })
     .catch((err) => {
       if (err.name === 'CastError') {
         next(new errorsList.BadRequestError('Переданы некорректные данные при обновлении профиля.'));
       } else if (err.name === 'ValidationError') {
         next(new errorsList.BadRequestError('Переданы некорректные данные при обновлении профиля.'));
+      } else {
+        next(new errorsList.InternalServerError(err.message));
       }
     });
 };
@@ -128,5 +152,7 @@ module.exports.login = (req, res, next) => {
 
       return res.send({ message: 'Всё верно!' });
     })
-    .catch(next);
+    .catch((err) => {
+      next(new errorsList.InternalServerError(err.message));
+    });
 };
