@@ -131,7 +131,7 @@ module.exports.login = (req, res, next) => {
   User.findOne({ email }).select('+password')
     .then((user) => {
       if (!user) {
-        throw new errorsList.UnauthorizedError('Неправильные почта или пароль.');
+        next(new errorsList.UnauthorizedError('Неправильные почта или пароль.'));
       }
 
       userId = user._id;
@@ -140,7 +140,7 @@ module.exports.login = (req, res, next) => {
     })
     .then((matched) => {
       if (!matched) {
-        throw new errorsList.UnauthorizedError('Неправильные почта или пароль.');
+        next(new errorsList.UnauthorizedError('Неправильные почта или пароль.'));
       }
 
       const token = jwt.sign({ _id: userId }, 'fcf58399f279c73d80340f6b2d4ce122b64ee01f070b4ac3f911d119d0ab608b', { expiresIn: '7d' });
