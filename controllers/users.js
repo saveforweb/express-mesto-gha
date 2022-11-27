@@ -51,13 +51,12 @@ module.exports.createUser = (req, res, next) => {
       name, about, avatar, email, password: hash,
     }))
     .then((document) => {
-      const { password: removed, ...user } = document.toObject();
+      const user = document.toObject();
+      delete user.password;
       res.send({ data: user });
     })
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        next(new errorsList.BadRequestError('Переданы некорректные данные при создании пользователя.'));
-      } else if (err.message === 'Illegal arguments: undefined, number') {
         next(new errorsList.BadRequestError('Переданы некорректные данные при создании пользователя.'));
       } else if (err.code === 11000) {
         next(new errorsList.ConflictError('Пользователь с таким email зарегистрован.'));
@@ -103,18 +102,15 @@ module.exports.updateAvatarUser = (req, res, next) => {
 
 module.exports.login = (req, res, next) => {
   const { email, password } = req.body;
+  let userId;
 
   User.findOne({ email }).select('+password')
     .then((user) => {
       if (!user) {
         throw new errorsList.UnauthorizedError('Неправильные почта или пароль.');
       }
-      const token = jwt.sign({ _id: user._id }, 'fcf58399f279c73d80340f6b2d4ce122b64ee01f070b4ac3f911d119d0ab608b', { expiresIn: '7d' });
-      res
-        .cookie('jwt', token, {
-          maxAge: 3600000 * 24 * 7,
-          httpOnly: true,
-        });
+
+      userId = user._id;
 
       return bcrypt.compare(password, user.password);
     })
@@ -122,6 +118,13 @@ module.exports.login = (req, res, next) => {
       if (!matched) {
         throw new errorsList.UnauthorizedError('Неправильные почта или пароль.');
       }
+
+      const token = jwt.sign({ _id: userId }, 'fcf58399f279c73d80340f6b2d4ce122b64ee01f070b4ac3f911d119d0ab608b', { expiresIn: '7d' });
+
+      res.cookie('jwt', token, {
+        maxAge: 3600000 * 24 * 7,
+        httpOnly: true,
+      });
 
       return res.send({ message: 'Всё верно!' });
     })

@@ -15,11 +15,10 @@ app.use(cookieParser());
 
 mongoose.connect('mongodb://localhost:27017/mestodb', (err) => {
   if (err) {
-    // eslint-disable-next-line no-console
     console.log(err);
+  } else {
+    console.log('connected to MongoDB');
   }
-  // eslint-disable-next-line no-console
-  console.log('connected to MongoDB');
 });
 
 app.use(bodyParser.json());
@@ -36,7 +35,7 @@ app.post('/signup', celebrate({
   body: Joi.object().keys({
     name: Joi.string().min(2).max(30),
     about: Joi.string().min(2).max(30),
-    avatar: Joi.string().uri({ scheme: ['http', 'https'] }),
+    avatar: Joi.string().uri({ scheme: ['^(https?|ftp|file)://[-a-zA-Z0-9+&@#/%?=~_|!:,.;]*[-a-zA-Z0-9+&@#/%=~_|]'] }),
     email: Joi.string().email().required(),
     password: Joi.string().required(),
   }),
@@ -47,8 +46,8 @@ app.use(auth);
 app.use('/users', require('./routes/users'));
 app.use('/cards', require('./routes/cards'));
 
-app.use('*', () => {
-  throw new errorsList.NotFoundError('Страница не найдена.');
+app.use('*', (req, res, next) => {
+  next(new errorsList.NotFoundError('Страница не найдена.'));
 });
 
 app.use(errors());

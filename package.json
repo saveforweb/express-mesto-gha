@@ -7,7 +7,7 @@
   "scripts": {
     "lint": "npx eslint .",
     "start": "node app.js",
-    "dev": "nodemon",
+    "dev": "nodemon app.js",
     "dev-inspect": "nodemon --inspect"
   },
   "devDependencies": {
