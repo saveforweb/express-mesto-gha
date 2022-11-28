@@ -3,6 +3,8 @@ const jwt = require('jsonwebtoken');
 const User = require('../models/user');
 const errorsList = require('../errors/index');
 
+const { tokenString = 'dev-secret' } = process.env;
+
 module.exports.getUsers = (req, res, next) => {
   User.find({})
     .then((users) => res.send({ data: users }))
@@ -133,7 +135,7 @@ module.exports.login = (req, res, next) => {
         next(new errorsList.UnauthorizedError('Неправильные почта или пароль.'));
       }
 
-      const token = jwt.sign({ _id: userId }, 'fcf58399f279c73d80340f6b2d4ce122b64ee01f070b4ac3f911d119d0ab608b', { expiresIn: '7d' });
+      const token = jwt.sign({ _id: userId }, tokenString, { expiresIn: '7d' });
 
       res.cookie('jwt', token, {
         maxAge: 3600000 * 24 * 7,

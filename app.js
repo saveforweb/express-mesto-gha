@@ -36,7 +36,7 @@ app.post('/signup', celebrate({
   body: Joi.object().keys({
     name: Joi.string().min(2).max(30),
     about: Joi.string().min(2).max(30),
-    avatar: Joi.string().regex(regexList.urlRegex).uri({ scheme: ['http', 'https'] }),
+    avatar: Joi.string().regex(regexList.urlRegex),
     email: Joi.string().email().required(),
     password: Joi.string().required(),
   }),
@@ -53,7 +53,7 @@ app.use('*', (req, res, next) => {
 
 app.use(errors());
 
-app.use((err, req, res, next) => {
+app.use((err, req, res) => {
   const { statusCode = errorCodes.internalServerError, message } = err;
 
   res
@@ -63,7 +63,6 @@ app.use((err, req, res, next) => {
         ? 'На сервере произошла ошибка'
         : message,
     });
-  next();
 });
 
 app.listen(PORT, () => {

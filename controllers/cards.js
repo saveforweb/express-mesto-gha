@@ -3,8 +3,7 @@ const errorsList = require('../errors/index');
 
 module.exports.getCards = (req, res, next) => {
   Card.find({})
-    .populate('owner')
-    .populate('likes')
+    .populate(['owner', 'likes'])
     .then((cards) => res.send({ data: cards }))
     .catch((err) => {
       next(err);
