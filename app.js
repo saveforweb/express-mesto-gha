@@ -6,6 +6,7 @@ const bodyParser = require('body-parser');
 const { errorCodes } = require('./utils/errorCodes');
 const errorsList = require('./errors/index');
 const regexList = require('./utils/regexList');
+const { requestLogger, errorLogger } = require('./middlewares/logger');
 
 const { login, createUser } = require('./controllers/users');
 const auth = require('./middlewares/auth');
@@ -24,6 +25,8 @@ mongoose.connect('mongodb://localhost:27017/mestodb', (err) => {
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
+
+app.use(requestLogger);
 
 app.post('/signin', celebrate({
   body: Joi.object().keys({
@@ -51,6 +54,8 @@ app.use('*', (req, res, next) => {
   next(new errorsList.NotFoundError('Страница не найдена.'));
 });
 
+app.use(errorLogger);
+
 app.use(errors());
 
 app.use((err, req, res, next) => {
@@ -67,6 +72,5 @@ app.use((err, req, res, next) => {
 });
 
 app.listen(PORT, () => {
-  // eslint-disable-next-line no-console
   console.log(`App listening on port ${PORT}`);
 });
